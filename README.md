@@ -1,2 +1,0 @@
-# donponchomanual
-manual meseros
