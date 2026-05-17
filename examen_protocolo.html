@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examen de Protocolo — Don Poncho</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g:#C9A84C;--gl:#E8C96A;--gp:#F5E4A8;--gd:#8B6914;
+  --k:#06050A;--k1:#0D0B14;--k2:#13101C;
+  --w:#F8F2E6;--w70:rgba(248,242,230,.7);--w50:rgba(248,242,230,.5);--w30:rgba(248,242,230,.3);
+  --ok:#2D7A4A;--okl:rgba(45,122,74,.15);--okb:#4ADE80;
+  --err:#8B1A00;--errl:rgba(139,26,0,.15);--errb:#FF5733;
+  --warn:#7A4E10;--warnl:rgba(122,78,16,.15);--warnb:#F5C878;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--k);color:var(--w);-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:var(--k1);}::-webkit-scrollbar-thumb{background:var(--gd);}
+
+/* HERO */
+.hero{
+  min-height:55vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:80px 40px 60px;position:relative;overflow:hidden;
+  background:radial-gradient(ellipse 80% 60% at 50% 100%,rgba(139,105,20,.22) 0%,transparent 65%),
+    linear-gradient(165deg,#06050A 0%,#0D0B14 40%,#13101C 70%,#1A1626 100%);
+}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(201,168,76,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,.025) 1px,transparent 1px);background-size:70px 70px;}
+.hero-corner{position:absolute;width:80px;height:80px;border-color:rgba(201,168,76,.2);border-style:solid;}
+.hero-corner.tl{top:28px;left:28px;border-width:1px 0 0 1px;}
+.hero-corner.tr{top:28px;right:28px;border-width:1px 1px 0 0;}
+.hero-corner.bl{bottom:28px;left:28px;border-width:0 0 1px 1px;}
+.hero-corner.br{bottom:28px;right:28px;border-width:0 1px 1px 0;}
+.hero-badge{position:relative;z-index:1;display:inline-flex;align-items:center;gap:10px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);border-radius:30px;padding:7px 18px;font-size:9px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--gp);margin-bottom:28px;}
+.hero-dot{width:6px;height:6px;background:var(--g);border-radius:50%;box-shadow:0 0 8px var(--g);animation:blink 2s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.hero-title{position:relative;z-index:1;font-family:'Playfair Display',serif;font-size:clamp(40px,7vw,84px);font-weight:900;font-style:italic;color:var(--g);line-height:.95;margin-bottom:12px;text-shadow:0 0 50px rgba(201,168,76,.25);}
+.hero-sub{position:relative;z-index:1;font-family:'Playfair Display',serif;font-size:clamp(16px,2.5vw,26px);color:var(--w50);letter-spacing:2px;margin-bottom:8px;}
+.hero-desc{position:relative;z-index:1;font-family:'Lora',serif;font-style:italic;font-size:15px;color:var(--w30);margin-bottom:40px;}
+.hero-stats{position:relative;z-index:1;display:flex;gap:0;border:1px solid rgba(201,168,76,.15);border-radius:3px;overflow:hidden;background:rgba(201,168,76,.04);}
+.hs{padding:18px 28px;border-right:1px solid rgba(201,168,76,.1);text-align:center;}
+.hs:last-child{border-right:none;}
+.hs-n{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--g);line-height:1;margin-bottom:4px;}
+.hs-l{font-size:8px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--w30);}
+
+/* FORM CONTAINER */
+.exam-wrap{max-width:860px;margin:0 auto;padding:60px 40px 100px;}
+
+/* SECCIÓN */
+.exam-section{margin-bottom:56px;}
+.section-header{display:flex;align-items:center;gap:18px;margin-bottom:32px;padding-bottom:18px;border-bottom:1px solid rgba(201,168,76,.12);}
+.section-num{width:48px;height:48px;min-width:48px;border-radius:50%;background:linear-gradient(135deg,var(--gd),var(--g));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:var(--k);box-shadow:0 6px 20px rgba(201,168,76,.25);}
+.section-info{}
+.section-type{font-size:8.5px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--gd);margin-bottom:4px;}
+.section-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--w);}
+.section-pts{font-size:11px;color:var(--w30);margin-top:3px;}
+
+/* PREGUNTA */
+.q-block{background:linear-gradient(160deg,rgba(26,22,38,.85),rgba(13,11,20,.9));border:1px solid rgba(201,168,76,.1);border-radius:3px;padding:32px 28px;margin-bottom:20px;transition:border-color .25s;}
+.q-block:focus-within{border-color:rgba(201,168,76,.3);}
+.q-num{font-size:8.5px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gd);margin-bottom:10px;}
+.q-text{font-family:'Lora',serif;font-size:17px;line-height:1.65;color:var(--w);margin-bottom:20px;}
+.q-text strong{color:var(--gp);}
+
+/* OPCIONES MÚLTIPLE */
+.options{display:flex;flex-direction:column;gap:10px;}
+.opt{display:flex;align-items:flex-start;gap:14px;padding:14px 18px;background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.1);border-radius:3px;cursor:pointer;transition:all .2s;}
+.opt:hover{background:rgba(201,168,76,.08);border-color:rgba(201,168,76,.25);}
+.opt input[type=radio]{display:none;}
+.opt-marker{width:20px;height:20px;min-width:20px;border:1.5px solid rgba(201,168,76,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .2s;}
+.opt-marker-inner{width:8px;height:8px;border-radius:50%;background:var(--g);opacity:0;transition:opacity .2s;}
+.opt input[type=radio]:checked ~ .opt-content .opt-marker .opt-marker-inner{opacity:1;}
+.opt input[type=radio]:checked + .opt-content{color:var(--w);}
+.opt input[type=radio]:checked ~ * .opt-marker{border-color:var(--g);}
+.opt-label{font-size:13.5px;color:var(--w70);line-height:1.6;transition:color .2s;}
+.opt.selected .opt-marker{border-color:var(--g);}
+.opt.selected .opt-marker-inner{opacity:1;}
+.opt.selected .opt-label{color:var(--w);}
+.opt.correct{background:var(--okl);border-color:var(--okb);}
+.opt.correct .opt-label{color:var(--okb);}
+.opt.wrong{background:var(--errl);border-color:var(--errb);}
+.opt.wrong .opt-label{color:var(--errb);}
+.opt.show-correct{background:var(--okl);border-color:var(--okb);}
+.opt.show-correct .opt-label{color:var(--okb);}
+
+/* VERDADERO/FALSO */
+.tf-opts{display:flex;gap:12px;}
+.tf-opt{flex:1;padding:16px;background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.1);border-radius:3px;cursor:pointer;text-align:center;font-weight:700;font-size:14px;color:var(--w50);transition:all .2s;}
+.tf-opt:hover{background:rgba(201,168,76,.1);color:var(--w);}
+.tf-opt.selected{background:rgba(201,168,76,.12);border-color:var(--g);color:var(--g);}
+.tf-opt.correct{background:var(--okl);border-color:var(--okb);color:var(--okb);}
+.tf-opt.wrong{background:var(--errl);border-color:var(--errb);color:var(--errb);}
+.tf-opt.show-correct{background:var(--okl);border-color:var(--okb);color:var(--okb);}
+
+/* ABIERTA */
+.open-area{width:100%;min-height:120px;padding:16px 18px;background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.15);border-radius:3px;font-size:13.5px;color:var(--w);font-family:'DM Sans',sans-serif;line-height:1.7;resize:vertical;outline:none;transition:border-color .2s;}
+.open-area::placeholder{color:var(--w30);}
+.open-area:focus{border-color:rgba(201,168,76,.4);}
+.open-hint{margin-top:10px;font-size:11px;color:var(--w30);font-style:italic;line-height:1.6;}
+.open-rubric{margin-top:14px;padding:16px 18px;background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.12);border-radius:3px;display:none;}
+.open-rubric.show{display:block;}
+.open-rubric-title{font-size:8.5px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--g);margin-bottom:10px;}
+.open-rubric-text{font-size:12.5px;color:var(--w50);line-height:1.75;}
+.open-rubric-text strong{color:var(--gp);}
+
+/* CASO */
+.caso-box{background:rgba(201,168,76,.05);border:1px solid rgba(201,168,76,.15);border-radius:3px;padding:22px 24px;margin-bottom:20px;}
+.caso-label{font-size:8px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--g);margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.caso-label::after{content:'';height:1px;flex:1;background:rgba(201,168,76,.2);}
+.caso-text{font-family:'Lora',serif;font-size:15px;font-style:italic;color:var(--w70);line-height:1.8;}
+
+/* FEEDBACK POR PREGUNTA */
+.q-feedback{margin-top:14px;padding:14px 18px;border-radius:3px;display:none;font-size:13px;line-height:1.7;}
+.q-feedback.show{display:block;}
+.q-feedback.ok{background:var(--okl);border-left:3px solid var(--okb);color:var(--okb);}
+.q-feedback.err{background:var(--errl);border-left:3px solid var(--errb);color:var(--errb);}
+.q-feedback.open{background:var(--warnl);border-left:3px solid var(--warnb);color:var(--warnb);}
+.q-feedback strong{font-weight:700;}
+
+/* BOTÓN SUBMIT */
+.submit-area{text-align:center;margin-top:48px;}
+.submit-btn{display:inline-flex;align-items:center;gap:12px;padding:20px 56px;background:linear-gradient(135deg,var(--gd),var(--g),var(--gl));border:none;border-radius:3px;font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--k);cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 8px 32px rgba(201,168,76,.3);transition:opacity .2s,transform .2s;}
+.submit-btn:hover{opacity:.9;transform:translateY(-2px);}
+.submit-note{font-size:11px;color:var(--w30);margin-top:14px;font-style:italic;}
+
+/* RESULTADO FINAL */
+.result-panel{display:none;margin-top:48px;border-radius:4px;overflow:hidden;}
+.result-panel.show{display:block;animation:slideUp .5s ease both;}
+@keyframes slideUp{from{opacity:0;transform:translateY(32px);}to{opacity:1;transform:translateY(0);}}
+.result-top{padding:48px 40px;text-align:center;}
+.result-top.excelente{background:linear-gradient(135deg,rgba(45,122,74,.2),rgba(45,122,74,.08));}
+.result-top.bien{background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(201,168,76,.06));}
+.result-top.repaso{background:linear-gradient(135deg,rgba(139,26,0,.2),rgba(139,26,0,.08));}
+.result-emoji{font-size:52px;margin-bottom:16px;}
+.result-score{font-family:'Playfair Display',serif;font-size:clamp(56px,10vw,100px);font-weight:900;line-height:1;margin-bottom:8px;}
+.result-top.excelente .result-score{color:var(--okb);}
+.result-top.bien .result-score{color:var(--g);}
+.result-top.repaso .result-score{color:var(--errb);}
+.result-label{font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;margin-bottom:16px;}
+.result-top.excelente .result-label{color:var(--okb);}
+.result-top.bien .result-label{color:var(--g);}
+.result-top.repaso .result-label{color:var(--errb);}
+.result-msg{font-family:'Lora',serif;font-style:italic;font-size:18px;color:var(--w70);max-width:560px;margin:0 auto;line-height:1.7;}
+.result-breakdown{background:rgba(13,11,20,.9);border:1px solid rgba(201,168,76,.1);padding:32px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:2px;}
+.rb-item{padding:20px;text-align:center;background:rgba(201,168,76,.03);}
+.rb-num{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--g);line-height:1;margin-bottom:5px;}
+.rb-lbl{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--w30);}
+.result-actions{display:flex;gap:12px;justify-content:center;margin-top:28px;flex-wrap:wrap;}
+.btn-retry{padding:16px 36px;background:none;border:1px solid rgba(201,168,76,.3);border-radius:3px;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--g);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.btn-retry:hover{background:rgba(201,168,76,.08);}
+.btn-portal{padding:16px 36px;background:linear-gradient(135deg,var(--gd),var(--g));border:none;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--k);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.btn-portal:hover{opacity:.9;}
+
+/* PROGRESS BAR */
+.progress-bar-wrap{background:rgba(201,168,76,.08);height:4px;position:sticky;top:0;z-index:100;}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--gd),var(--g),var(--gl));width:0%;transition:width .4s ease;box-shadow:0 0 8px rgba(201,168,76,.3);}
+
+@media(max-width:640px){
+  .exam-wrap{padding:40px 18px 80px;}
+  .hero{padding:60px 24px 48px;}
+  .hero-stats{flex-direction:column;}
+  .hs{border-right:none;border-bottom:1px solid rgba(201,168,76,.1);}
+  .hs:last-child{border-bottom:none;}
+  .tf-opts{flex-direction:column;}
+  .result-breakdown{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar"></div></div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-corner tl"></div><div class="hero-corner tr"></div>
+  <div class="hero-corner bl"></div><div class="hero-corner br"></div>
+  <div class="hero-badge"><div class="hero-dot"></div>Evaluación Oficial del Equipo</div>
+  <h1 class="hero-title">Examen de<br>Protocolo</h1>
+  <p class="hero-sub">Manual del Mesero de Élite</p>
+  <p class="hero-desc">Barbacoa y Antojitos Don Poncho · Milpa Alta, CDMX</p>
+  <div class="hero-stats">
+    <div class="hs"><div class="hs-n">25</div><div class="hs-l">Preguntas</div></div>
+    <div class="hs"><div class="hs-n">3</div><div class="hs-l">Secciones</div></div>
+    <div class="hs"><div class="hs-n">70%</div><div class="hs-l">Mínimo para aprobar</div></div>
+    <div class="hs"><div class="hs-n">~20 min</div><div class="hs-l">Tiempo estimado</div></div>
+  </div>
+</div>
+
+<!-- EXAMEN -->
+<div class="exam-wrap">
+<form id="examForm">
+
+<!-- ════════════════════════════════════
+  SECCIÓN 1 · OPCIÓN MÚLTIPLE (10 preguntas)
+════════════════════════════════════ -->
+<div class="exam-section">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div class="section-info">
+      <div class="section-type">Sección A</div>
+      <div class="section-title">Opción Múltiple</div>
+      <div class="section-pts">10 preguntas · 1 punto cada una · Solo una respuesta correcta</div>
+    </div>
+  </div>
+
+  <!-- P1 -->
+  <div class="q-block" id="qb1">
+    <div class="q-num">Pregunta 01</div>
+    <div class="q-text">Cuando un cliente entra al restaurante y no puedes atenderlo de inmediato, ¿cuál es la acción correcta según el protocolo Don Poncho?</div>
+    <div class="options" id="q1">
+      <div class="opt" onclick="selectOpt(this,'q1','a')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Terminar lo que estás haciendo y luego acercarte sin decir nada todavía.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q1','b')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Hacer contacto visual, asentir con la cabeza y decir "En un momento los atiendo, por favor tomen asiento."</div></div>
+      <div class="opt" onclick="selectOpt(this,'q1','c')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Pedirle a un compañero que los atienda sin avisarle nada al cliente.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q1','d')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Ignorarlos hasta que se sienten solos y entonces acercarte.</div></div>
+    </div>
+    <div class="q-feedback" id="fb1"></div>
+  </div>
+
+  <!-- P2 -->
+  <div class="q-block" id="qb2">
+    <div class="q-num">Pregunta 02</div>
+    <div class="q-text">¿Cuánto tiempo máximo debe pasar entre que el cliente solicita la cuenta y que tú se la presentas?</div>
+    <div class="options" id="q2">
+      <div class="opt" onclick="selectOpt(this,'q2','a')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">5 minutos — es tiempo suficiente y razonable.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q2','b')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">10 minutos — si estás atendiendo otras mesas.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q2','c')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Menos de 3 minutos — siempre, sin excepción.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q2','d')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Cuando termines con las otras mesas que atiendes.</div></div>
+    </div>
+    <div class="q-feedback" id="fb2"></div>
+  </div>
+
+  <!-- P3 -->
+  <div class="q-block" id="qb3">
+    <div class="q-num">Pregunta 03</div>
+    <div class="q-text">¿Cuáles son las formas de pago aceptadas en Don Poncho?</div>
+    <div class="options" id="q3">
+      <div class="opt" onclick="selectOpt(this,'q3','a')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Solo efectivo y tarjeta de crédito.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q3','b')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Efectivo, tarjeta de crédito, tarjeta de débito y transferencia bancaria.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q3','c')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Solo efectivo — no se aceptan tarjetas.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q3','d')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Efectivo, tarjeta de crédito y criptomonedas.</div></div>
+    </div>
+    <div class="q-feedback" id="fb3"></div>
+  </div>
+
+  <!-- P4 -->
+  <div class="q-block" id="qb4">
+    <div class="q-num">Pregunta 04</div>
+    <div class="q-text">¿A qué minuto exacto debes regresar a la mesa después de servir los platos para hacer el check-in de calidad?</div>
+    <div class="options" id="q4">
+      <div class="opt" onclick="selectOpt(this,'q4','a')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Al minuto 1 — antes de que empiecen a comer.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q4','b')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Al minuto 3 — cuando ya probaron pero el recuerdo es fresco.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q4','c')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Al minuto 10 — cuando ya casi terminaron.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q4','d')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Solo si el cliente te llama — no hay que interrumpir.</div></div>
+    </div>
+    <div class="q-feedback" id="fb4"></div>
+  </div>
+
+  <!-- P5 -->
+  <div class="q-block" id="qb5">
+    <div class="q-num">Pregunta 05</div>
+    <div class="q-text">Según el protocolo Don Poncho, ¿qué pregunta debes hacer durante el check-in a los 3 minutos?</div>
+    <div class="options" id="q5">
+      <div class="opt" onclick="selectOpt(this,'q5','a')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">"¿Cómo está todo?" — es amable y abierta.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q5','b')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">"¿Necesitan algo más?" — cubre todas las posibilidades.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q5','c')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">"¿La barbacoa está al punto que esperaban?" — específica y genuina.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q5','d')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">"¿Van a querer postre?" — aprovechas el momento para vender.</div></div>
+    </div>
+    <div class="q-feedback" id="fb5"></div>
+  </div>
+
+  <!-- P6 -->
+  <div class="q-block" id="qb6">
+    <div class="q-num">Pregunta 06</div>
+    <div class="q-text">¿En qué orden se sirve la comida según el protocolo?</div>
+    <div class="options" id="q6">
+      <div class="opt" onclick="selectOpt(this,'q6','a')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Primero hombres, luego mujeres, luego niños y adultos mayores.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q6','b')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Al que tenga el platillo listo primero, sin importar el orden.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q6','c')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Primero niños y adultos mayores, luego mujeres, luego hombres.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q6','d')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Al azar — lo importante es que llegue caliente.</div></div>
+    </div>
+    <div class="q-feedback" id="fb6"></div>
+  </div>
+
+  <!-- P7 -->
+  <div class="q-block" id="qb7">
+    <div class="q-num">Pregunta 07</div>
+    <div class="q-text">¿Cuánto cuesta el estacionamiento de Don Poncho para los clientes?</div>
+    <div class="options" id="q7">
+      <div class="opt" onclick="selectOpt(this,'q7','a')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">$20 pesos por hora — tarifa especial para clientes.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q7','b')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Es completamente gratuito para todos los clientes.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q7','c')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">No tenemos estacionamiento propio — hay lugares en la calle.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q7','d')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Es gratuito solo para clientes que consuman más de $300 pesos.</div></div>
+    </div>
+    <div class="q-feedback" id="fb7"></div>
+  </div>
+
+  <!-- P8 -->
+  <div class="q-block" id="qb8">
+    <div class="q-num">Pregunta 08</div>
+    <div class="q-text">¿Cuál es la política de Don Poncho sobre la cancelación de platillos o bebidas?</div>
+    <div class="options" id="q8">
+      <div class="opt" onclick="selectOpt(this,'q8','a')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Se puede cancelar cualquier platillo mientras no haya salido de la cocina.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q8','b')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Se puede cancelar si el cliente lo pide amablemente y hay una razón válida.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q8','c')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Por higiene, NO es posible cancelar ningún platillo o bebida una vez que ya está en la mesa.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q8','d')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Se puede cancelar siempre que el cliente no haya probado el platillo.</div></div>
+    </div>
+    <div class="q-feedback" id="fb8"></div>
+  </div>
+
+  <!-- P9 -->
+  <div class="q-block" id="qb9">
+    <div class="q-num">Pregunta 09</div>
+    <div class="q-text">¿En qué días abre Don Poncho al público?</div>
+    <div class="options" id="q9">
+      <div class="opt" onclick="selectOpt(this,'q9','a')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">De lunes a viernes, de 8am a 3pm.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q9','b')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Solo sábados, domingos y días festivos.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q9','c')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Todos los días de la semana.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q9','d')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Viernes, sábados y domingos.</div></div>
+    </div>
+    <div class="q-feedback" id="fb9"></div>
+  </div>
+
+  <!-- P10 -->
+  <div class="q-block" id="qb10">
+    <div class="q-num">Pregunta 10</div>
+    <div class="q-text">¿Cuál es el número de WhatsApp oficial de Don Poncho para pedidos y reservaciones?</div>
+    <div class="options" id="q10">
+      <div class="opt" onclick="selectOpt(this,'q10','a')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">55 5548-0603</div></div>
+      <div class="opt" onclick="selectOpt(this,'q10','b')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">55 2903-0409</div></div>
+      <div class="opt" onclick="selectOpt(this,'q10','c')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">55 1234-5678</div></div>
+      <div class="opt" onclick="selectOpt(this,'q10','d')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">No hay WhatsApp, solo llamadas al teléfono del restaurante.</div></div>
+    </div>
+    <div class="q-feedback" id="fb10"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+  SECCIÓN 2 · VERDADERO O FALSO (8 preguntas)
+════════════════════════════════════ -->
+<div class="exam-section">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div class="section-info">
+      <div class="section-type">Sección B</div>
+      <div class="section-title">Verdadero o Falso</div>
+      <div class="section-pts">8 preguntas · 1 punto cada una</div>
+    </div>
+  </div>
+
+  <!-- TF1 -->
+  <div class="q-block" id="qbtf1">
+    <div class="q-num">Pregunta 11</div>
+    <div class="q-text">La barbacoa de Don Poncho es de borrego 100% puro, sin mezclas ni rellenos, cocinada más de 12 horas en horno de tierra con pencas de maguey.</div>
+    <div class="tf-opts">
+      <div class="tf-opt" id="tf1_V" onclick="selectTF('tf1','V')">✓ Verdadero</div>
+      <div class="tf-opt" id="tf1_F" onclick="selectTF('tf1','F')">✗ Falso</div>
+    </div>
+    <div class="q-feedback" id="fbtf1"></div>
+  </div>
+
+  <!-- TF2 -->
+  <div class="q-block" id="qbtf2">
+    <div class="q-num">Pregunta 12</div>
+    <div class="q-text">Don Poncho tiene varias sucursales en la Ciudad de México para facilitar el acceso a sus clientes.</div>
+    <div class="tf-opts">
+      <div class="tf-opt" id="tf2_V" onclick="selectTF('tf2','V')">✓ Verdadero</div>
+      <div class="tf-opt" id="tf2_F" onclick="selectTF('tf2','F')">✗ Falso</div>
+    </div>
+    <div class="q-feedback" id="fbtf2"></div>
+  </div>
+
+  <!-- TF3 -->
+  <div class="q-block" id="qbtf3">
+    <div class="q-num">Pregunta 13</div>
+    <div class="q-text">El mesero puede usar el celular durante el turno mientras no lo vean los clientes de su sección.</div>
+    <div class="tf-opts">
+      <div class="tf-opt" id="tf3_V" onclick="selectTF('tf3','V')">✓ Verdadero</div>
+      <div class="tf-opt" id="tf3_F" onclick="selectTF('tf3','F')">✗ Falso</div>
+    </div>
+    <div class="q-feedback" id="fbtf3"></div>
+  </div>
+
+  <!-- TF4 -->
+  <div class="q-block" id="qbtf4">
+    <div class="q-num">Pregunta 14</div>
+    <div class="q-text">Don Poncho ha aparecido en programas de televisión nacionales como ADN40 y Bandamax.</div>
+    <div class="tf-opts">
+      <div class="tf-opt" id="tf4_V" onclick="selectTF('tf4','V')">✓ Verdadero</div>
+      <div class="tf-opt" id="tf4_F" onclick="selectTF('tf4','F')">✗ Falso</div>
+    </div>
+    <div class="q-feedback" id="fbtf4"></div>
+  </div>
+
+  <!-- TF5 -->
+  <div class="q-block" id="qbtf5">
+    <div class="q-num">Pregunta 15</div>
+    <div class="q-text">Cuando un platillo se agota, el mesero puede simplemente decir "no hay" y pasar a otra cosa sin ofrecer alternativas.</div>
+    <div class="tf-opts">
+      <div class="tf-opt" id="tf5_V" onclick="selectTF('tf5','V')">✓ Verdadero</div>
+      <div class="tf-opt" id="tf5_F" onclick="selectTF('tf5','F')">✗ Falso</div>
+    </div>
+    <div class="q-feedback" id="fbtf5"></div>
+  </div>
+
+  <!-- TF6 -->
+  <div class="q-block" id="qbtf6">
+    <div class="q-num">Pregunta 16</div>
+    <div class="q-text">Don Poncho cuenta con área de juegos para niños y estacionamiento amplio y gratuito.</div>
+    <div class="tf-opts">
+      <div class="tf-opt" id="tf6_V" onclick="selectTF('tf6','V')">✓ Verdadero</div>
+      <div class="tf-opt" id="tf6_F" onclick="selectTF('tf6','F')">✗ Falso</div>
+    </div>
+    <div class="q-feedback" id="fbtf6"></div>
+  </div>
+
+  <!-- TF7 -->
+  <div class="q-block" id="qbtf7">
+    <div class="q-num">Pregunta 17</div>
+    <div class="q-text">El Consomé de Borrego se elabora con el mismo caldo de la barbacoa, por lo que es una recomendación natural al momento de tomar la orden.</div>
+    <div class="tf-opts">
+      <div class="tf-opt" id="tf7_V" onclick="selectTF('tf7','V')">✓ Verdadero</div>
+      <div class="tf-opt" id="tf7_F" onclick="selectTF('tf7','F')">✗ Falso</div>
+    </div>
+    <div class="q-feedback" id="fbtf7"></div>
+  </div>
+
+  <!-- TF8 -->
+  <div class="q-block" id="qbtf8">
+    <div class="q-num">Pregunta 18</div>
+    <div class="q-text">La "Esencia Don Poncho" es una bebida de café insignia de la casa, cremosa, intensa y profundamente aromática, que se debe ofrecer primero entre los cafés de especialidad.</div>
+    <div class="tf-opts">
+      <div class="tf-opt" id="tf8_V" onclick="selectTF('tf8','V')">✓ Verdadero</div>
+      <div class="tf-opt" id="tf8_F" onclick="selectTF('tf8','F')">✗ Falso</div>
+    </div>
+    <div class="q-feedback" id="fbtf8"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+  SECCIÓN 3 · CASOS REALES (7 preguntas)
+════════════════════════════════════ -->
+<div class="exam-section">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div class="section-info">
+      <div class="section-type">Sección C</div>
+      <div class="section-title">Casos Reales</div>
+      <div class="section-pts">7 casos · 1 punto c/opción múltiple · Abiertas calificadas por el supervisor</div>
+    </div>
+  </div>
+
+  <!-- CASO 1 -->
+  <div class="caso-box">
+    <div class="caso-label">Caso 01 — La Espera Larga</div>
+    <div class="caso-text">Son las 10:30am de un domingo. La cocina tiene un retraso inesperado y la barbacoa de la mesa 4 lleva 25 minutos de espera cuando debían ser 15. El señor de la mesa empieza a voltear molesto y hace señas para llamarte.</div>
+  </div>
+  <div class="q-block">
+    <div class="q-num">Pregunta 19 — Opción Múltiple</div>
+    <div class="q-text">¿Cuál es la respuesta más correcta según el protocolo Don Poncho?</div>
+    <div class="options" id="q19">
+      <div class="opt" onclick="selectOpt(this,'q19','a')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Decirle: "Es que hay mucha gente hoy, tenga paciencia."</div></div>
+      <div class="opt" onclick="selectOpt(this,'q19','b')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Evitar acercarte hasta que la orden esté lista para no dar malas noticias.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q19','c')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Acercarte, pedir disculpa genuina, informar el tiempo estimado y ofrecerle algo mientras espera.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q19','d')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Decirle que el retraso es culpa de la cocina y que tú no tienes control sobre eso.</div></div>
+    </div>
+    <div class="q-feedback" id="fb19"></div>
+  </div>
+  <div class="q-block">
+    <div class="q-num">Pregunta 20 — Respuesta Abierta</div>
+    <div class="q-text">Escribe exactamente qué le dirías al señor de la mesa 4 cuando te acercas. Incluye la disculpa, la información del tiempo y la oferta de algo mientras espera.</div>
+    <textarea class="open-area" id="open20" placeholder="Escribe tu respuesta aquí..."></textarea>
+    <div class="open-hint">💡 Recuerda: usa la fórmula ARPA — Agradece · Reconoce · Propón · Actúa. Evita excusas y culpar a la cocina.</div>
+    <div class="open-rubric" id="rubric20">
+      <div class="open-rubric-title">Guía de Calificación para el Supervisor</div>
+      <div class="open-rubric-text">La respuesta debe incluir: <strong>1)</strong> Disculpa genuina sin excusas ni culpar a la cocina. <strong>2)</strong> Tiempo estimado concreto ("en 5 minutos aproximadamente"). <strong>3)</strong> Oferta de algo mientras espera (agua, botana, bebida). <strong>4)</strong> Tono calmado y profesional. Ejemplo: "Le pido una disculpa, su barbacoa llegará en aproximadamente 5 minutos — se está preparando con el mismo cuidado de siempre. ¿Mientras tanto le traigo algo para hacer la espera más agradable?"</div>
+    </div>
+  </div>
+
+  <!-- CASO 2 -->
+  <div class="caso-box">
+    <div class="caso-label">Caso 02 — El Plato Equivocado</div>
+    <div class="caso-text">Llevas a la mesa el Mixiote de Pollo pero el cliente había pedido el Mixiote de Borrego. El cliente te lo señala cuando ya lo pusiste en la mesa.</div>
+  </div>
+  <div class="q-block">
+    <div class="q-num">Pregunta 21 — Opción Múltiple</div>
+    <div class="q-text">¿Cómo manejas esta situación?</div>
+    <div class="options" id="q21">
+      <div class="opt" onclick="selectOpt(this,'q21','a')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Explicarle que quizás él se equivocó al pedir, ya que tú anotaste bien.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q21','b')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Aceptar el error sin excusas, llevarte el plato y resolver de inmediato avisando al supervisor.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q21','c')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Pedirle que se quede con ese platillo ya que salió de la cocina y no se puede cancelar.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q21','d')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Preguntar a la cocina antes de admitir el error con el cliente.</div></div>
+    </div>
+    <div class="q-feedback" id="fb21"></div>
+  </div>
+
+  <!-- CASO 3 -->
+  <div class="caso-box">
+    <div class="caso-label">Caso 03 — El Cliente que Quiere Descuento</div>
+    <div class="caso-text">Una pareja termina de comer y al recibir la cuenta dice: "Está un poco caro, ¿no nos pueden hacer un descuentito?" Te miran esperando una respuesta.</div>
+  </div>
+  <div class="q-block">
+    <div class="q-num">Pregunta 22 — Opción Múltiple</div>
+    <div class="q-text">¿Cuál es la respuesta correcta?</div>
+    <div class="options" id="q22">
+      <div class="opt" onclick="selectOpt(this,'q22','a')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Decirles "sí, déjeme ver qué puedo hacer" y quitar algo de la cuenta sin avisar al supervisor.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q22','b')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Decirles "el precio es el precio" y no darles más explicaciones.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q22','c')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Entender su posición, explicar el valor del producto artesanal y redirigirlos a opciones accesibles para la próxima visita, sin ceder el precio.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q22','d')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Ignorar el comentario y simplemente esperar a que paguen.</div></div>
+    </div>
+    <div class="q-feedback" id="fb22"></div>
+  </div>
+
+  <!-- CASO 4 -->
+  <div class="caso-box">
+    <div class="caso-label">Caso 04 — La Alergia en la Mesa</div>
+    <div class="caso-text">Una señora te pregunta si la Birria de Res contiene algún ingrediente con gluten porque su hijo es celíaco. No estás completamente seguro de la respuesta.</div>
+  </div>
+  <div class="q-block">
+    <div class="q-num">Pregunta 23 — Opción Múltiple</div>
+    <div class="q-text">¿Cómo respondes?</div>
+    <div class="options" id="q23">
+      <div class="opt" onclick="selectOpt(this,'q23','a')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Decirle que no tiene gluten para no perder la venta y confiar en que probablemente sea así.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q23','b')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Decirle que no puedes saberlo y que pregunte en otro lado.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q23','c')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Confirmar con cocina antes de responder, regresar con la información exacta y nunca inventar ni suponer.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q23','d')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Decirle que todos los platillos pueden contener trazas de cualquier ingrediente por precaución general.</div></div>
+    </div>
+    <div class="q-feedback" id="fb23"></div>
+  </div>
+
+  <!-- CASO 5 -->
+  <div class="caso-box">
+    <div class="caso-label">Caso 05 — El Influencer con Cámara</div>
+    <div class="caso-text">Un joven saca una cámara profesional y empieza a fotografiar los platillos. Tiene muchos seguidores según menciona. Te pregunta si puede hacer contenido aquí.</div>
+  </div>
+  <div class="q-block">
+    <div class="q-num">Pregunta 24 — Opción Múltiple</div>
+    <div class="q-text">¿Cuál es la mejor respuesta?</div>
+    <div class="options" id="q24">
+      <div class="opt" onclick="selectOpt(this,'q24','a')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Decirle que necesita autorización especial y que no puedes confirmarlo tú.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q24','b')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Ser colaborador, contarle la historia de Don Poncho, darle contexto del platillo y pedirle que etiquete @barbacoadonponcho_oficial con #MomentoDonPoncho.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q24','c')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Ignorarlo — los influencers generalmente no ayudan al negocio.</div></div>
+      <div class="opt" onclick="selectOpt(this,'q24','d')"><div class="opt-marker"><div class="opt-marker-inner"></div></div><div class="opt-label">Pedirle que no haga fotos porque puede molestar a otros clientes.</div></div>
+    </div>
+    <div class="q-feedback" id="fb24"></div>
+  </div>
+
+  <!-- CASO 6 — ABIERTO FINAL -->
+  <div class="caso-box">
+    <div class="caso-label">Caso 06 — La Despedida Perfecta</div>
+    <div class="caso-text">Una familia de 4 personas acaba de pagar. Vinieron por primera vez, tienen dos niños pequeños y quedaron muy contentos con la barbacoa. Es momento de despedirlos.</div>
+  </div>
+  <div class="q-block">
+    <div class="q-num">Pregunta 25 — Respuesta Abierta</div>
+    <div class="q-text">Escribe exactamente lo que dirías en la despedida de esta familia. Debe incluir: agradecimiento, recordatorio del horario, mención del estacionamiento gratuito, WhatsApp y una razón concreta para que regresen.</div>
+    <textarea class="open-area" id="open25" placeholder="Escribe tu respuesta aquí..."></textarea>
+    <div class="open-hint">💡 Esta es tu última oportunidad con esa familia. Hazla memorable. Usa la palabra "familia", menciona los niños y planta la semilla del próximo fin de semana.</div>
+    <div class="open-rubric" id="rubric25">
+      <div class="open-rubric-title">Guía de Calificación para el Supervisor</div>
+      <div class="open-rubric-text">La respuesta debe incluir: <strong>1)</strong> Agradecimiento genuino — no genérico. <strong>2)</strong> Recordatorio de horario solo fin de semana. <strong>3)</strong> WhatsApp 55 2903-0409. <strong>4)</strong> Estacionamiento gratuito. <strong>5)</strong> Mención a los niños y/o área de juegos. <strong>6)</strong> Razón concreta para regresar ("la próxima vez prueben los cafés de especialidad" o "pregunta por mí"). <strong>7)</strong> Uso de la palabra "familia" para crear pertenencia.</div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTÓN ENVIAR -->
+<div class="submit-area">
+  <button type="button" class="submit-btn" onclick="calificar()">
+    <span>→</span> Calificar Examen
+  </button>
+  <div class="submit-note">Las preguntas de opción múltiple y V/F se califican automáticamente.<br>Las respuestas abiertas las revisa y califica tu supervisor.</div>
+</div>
+
+<!-- RESULTADO -->
+<div class="result-panel" id="resultPanel">
+  <div class="result-top" id="resultTop">
+    <div class="result-emoji" id="resultEmoji"></div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-label" id="resultLabel"></div>
+    <div class="result-msg" id="resultMsg"></div>
+  </div>
+  <div class="result-breakdown">
+    <div class="rb-item"><div class="rb-num" id="rbCorr">-</div><div class="rb-lbl">Correctas</div></div>
+    <div class="rb-item"><div class="rb-num" id="rbWrong">-</div><div class="rb-lbl">Incorrectas</div></div>
+    <div class="rb-item"><div class="rb-num" id="rbOpen">2</div><div class="rb-lbl">Abiertas (supervisor)</div></div>
+    <div class="rb-item"><div class="rb-num" id="rbPct">-</div><div class="rb-lbl">% Automático</div></div>
+  </div>
+  <div class="result-actions">
+    <button class="btn-retry" onclick="reiniciar()">↺ Reintentar</button>
+    <button class="btn-portal" onclick="window.location.href='index.html'">← Volver al Portal</button>
+  </div>
+</div>
+
+</form>
+</div>
+
+<script>
+// ─── DATOS ───
+const ANSWERS = {
+  q1:'b', q2:'c', q3:'b', q4:'b', q5:'c',
+  q6:'c', q7:'b', q8:'c', q9:'b', q10:'b',
+  tf1:'V', tf2:'F', tf3:'F', tf4:'V', tf5:'F',
+  tf6:'V', tf7:'V', tf8:'V',
+  q19:'c', q21:'b', q22:'c', q23:'c', q24:'b'
+};
+
+const FEEDBACK = {
+  q1:{ok:'Correcto. El reconocimiento visual inmediato es el primer paso del protocolo. El cliente nunca debe sentirse ignorado.',err:'Incorrecto. La respuesta correcta es B — hacer contacto visual y avisar de inmediato que serán atendidos.'},
+  q2:{ok:'Correcto. La cuenta debe llegar en menos de 3 minutos siempre. Cada minuto extra destruye la experiencia final.',err:'Incorrecto. La respuesta correcta es C — menos de 3 minutos, sin excepción.'},
+  q3:{ok:'Correcto. Don Poncho acepta efectivo, tarjeta de crédito, débito y transferencia bancaria.',err:'Incorrecto. La respuesta correcta es B. Siempre confirma las cuatro formas de pago al cliente.'},
+  q4:{ok:'Correcto. El check-in a los 3 minutos es el tiempo exacto: ya probaron pero el sabor es fresco y aún pueden hacer ajustes.',err:'Incorrecto. La respuesta correcta es B — exactamente a los 3 minutos. Ni antes ni después.'},
+  q5:{ok:'Correcto. Las preguntas específicas generan respuestas reales y demuestran atención genuina.',err:'Incorrecto. La respuesta correcta es C — pregunta específica sobre la barbacoa. "¿Cómo está todo?" es una pregunta vacía que genera respuestas vacías.'},
+  q6:{ok:'Correcto. Primero niños y adultos mayores, luego mujeres, luego hombres.',err:'Incorrecto. La respuesta correcta es C — el protocolo de servicio tiene un orden específico de prioridad.'},
+  q7:{ok:'Correcto. El estacionamiento es completamente gratuito para todos los clientes. Mencionarlo activamente elimina objeciones para visitar.',err:'Incorrecto. La respuesta correcta es B — el estacionamiento es amplio y completamente gratuito.'},
+  q8:{ok:'Correcto. Por higiene, no es posible cancelar ningún platillo o bebida una vez en mesa. Por eso siempre se confirma la orden.',err:'Incorrecto. La respuesta correcta es C — la política de no cancelación es clara y se menciona al confirmar la orden.'},
+  q9:{ok:'Correcto. Solo sábados, domingos y días festivos. Ese horario es un argumento de escasez y calidad.',err:'Incorrecto. La respuesta correcta es B — solo fines de semana y festivos.'},
+  q10:{ok:'Correcto. El WhatsApp es 55 2903-0409. El teléfono del restaurante es 55 5548-0603.',err:'Incorrecto. La respuesta correcta es B — WhatsApp 55 2903-0409. Memoriza ambos números.'},
+  tf1:{ok:'Correcto. La barbacoa es el producto estrella: 100% borrego, sin mezclas, horno de tierra, pencas de maguey.',err:'Incorrecto. Es Verdadero. Esa descripción exacta es lo que debes comunicar al cliente.'},
+  tf2:{ok:'Incorrecto — es Falso. Don Poncho NO tiene sucursales ni franquicias. Eso es un argumento de exclusividad que debes usar.',err:'Correcto. Es Falso. Don Poncho es único — sin sucursales ni franquicias. Ese es uno de tus argumentos más poderosos.'},
+  tf3:{ok:'Incorrecto — es Falso. El celular va al bolsillo en silencio durante todo el turno, sin excepción.',err:'Correcto. Es Falso. El celular está completamente prohibido durante el servicio, aunque "no te vean".'},
+  tf4:{ok:'Correcto. Don Poncho ha aparecido en ADN40, Bandamax, Capital por Cual, La Voz de la Ciudad y ¿Qué Gustas?',err:'Incorrecto. Es Verdadero. Don Poncho tiene presencia en 5 programas de televisión nacional.'},
+  tf5:{ok:'Incorrecto — es Falso. Siempre debes ofrecer una alternativa cuando algo se agota. Nunca un "no hay" sin salida.',err:'Correcto. Es Falso. Siempre ofrece una alternativa: "Ese se agotó hoy, pero lo que les va a encantar igual es..."'},
+  tf6:{ok:'Correcto. Don Poncho tiene área de juegos para niños y estacionamiento amplio y gratuito.',err:'Incorrecto. Es Verdadero. Ambas instalaciones existen y debes mencionarlas proactivamente.'},
+  tf7:{ok:'Correcto. El consomé viene del mismo caldo de la barbacoa — es el upsell más natural del menú.',err:'Incorrecto. Es Verdadero. Siempre ofrece el consomé junto con la barbacoa.'},
+  tf8:{ok:'Correcto. La Esencia Don Poncho es la bebida insignia — siempre ofrecerla primera entre los cafés.',err:'Incorrecto. Es Verdadero. La Esencia Don Poncho es la bebida más especial y debe ofrecerse siempre primero.'},
+  q19:{ok:'Correcto. La fórmula ARPA: Agradece · Reconoce · Propón · Actúa. Convierte la espera en oportunidad de upsell.',err:'Incorrecto. La respuesta correcta es C — acercarte, disculparte genuinamente, dar tiempo estimado y ofrecer algo mientras esperan.'},
+  q21:{ok:'Correcto. Aceptas el error sin excusas, lo resuelves de inmediato y avisas al supervisor.',err:'Incorrecto. La respuesta correcta es B — aceptar el error sin excusas ni culpar a nadie, resolver rápido.'},
+  q22:{ok:'Correcto. Entiendes su posición, explicas el valor sin ceder el precio y sugieres opciones accesibles para la próxima visita.',err:'Incorrecto. La respuesta correcta es C — nunca cedes el precio ni ignoras al cliente. Redirige con valor.'},
+  q23:{ok:'Correcto. Con alergias, jamás inventes ni supongas. Confirmas con cocina y regresas con información precisa.',err:'Incorrecto. La respuesta correcta es C — confirmar con cocina siempre, nunca inventar con temas de salud.'},
+  q24:{ok:'Correcto. Los influencers son marketing gratuito. Colabora, cuenta la historia de Don Poncho y da los datos de redes.',err:'Incorrecto. La respuesta correcta es B — ser colaborador y usar la oportunidad para dar visibilidad a Don Poncho.'}
+};
+
+const selections = {};
+let calificado = false;
+
+// ─── SELECCIONAR OPCIÓN ───
+function selectOpt(el, qId, val) {
+  if (calificado) return;
+  const opts = document.querySelectorAll('#' + qId + ' .opt');
+  opts.forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selections[qId] = val;
+  updateProgress();
+}
+
+// ─── SELECCIONAR V/F ───
+function selectTF(qId, val) {
+  if (calificado) return;
+  document.getElementById(qId + '_V').classList.remove('selected');
+  document.getElementById(qId + '_F').classList.remove('selected');
+  document.getElementById(qId + '_' + val).classList.add('selected');
+  selections[qId] = val;
+  updateProgress();
+}
+
+// ─── PROGRESO ───
+function updateProgress() {
+  const total = Object.keys(ANSWERS).length;
+  const done = Object.keys(selections).length;
+  document.getElementById('progressBar').style.width = (done / total * 100) + '%';
+}
+
+// ─── CALIFICAR ───
+function calificar() {
+  if (calificado) return;
+  calificado = true;
+
+  let correct = 0;
+  let wrong = 0;
+  const total = Object.keys(ANSWERS).length;
+
+  Object.keys(ANSWERS).forEach(qId => {
+    const correct_ans = ANSWERS[qId];
+    const user_ans = selections[qId];
+    const fb = ANSWERS[qId];
+
+    if (qId.startsWith('tf')) {
+      // Verdadero/Falso
+      const vEl = document.getElementById(qId + '_V');
+      const fEl = document.getElementById(qId + '_F');
+      const fbEl = document.getElementById('fb' + qId);
+      if (!user_ans) {
+        // sin respuesta
+        if (correct_ans === 'V') { vEl.classList.add('show-correct'); }
+        else { fEl.classList.add('show-correct'); }
+        fbEl.className = 'q-feedback err show';
+        fbEl.innerHTML = '<strong>Sin responder.</strong> ' + FEEDBACK[qId].err;
+        wrong++;
+      } else if (user_ans === correct_ans) {
+        document.getElementById(qId + '_' + user_ans).classList.add('correct');
+        fbEl.className = 'q-feedback ok show';
+        fbEl.innerHTML = '<strong>✓ Correcto.</strong> ' + FEEDBACK[qId].ok;
+        correct++;
+      } else {
+        document.getElementById(qId + '_' + user_ans).classList.add('wrong');
+        if (correct_ans === 'V') { vEl.classList.add('show-correct'); }
+        else { fEl.classList.add('show-correct'); }
+        fbEl.className = 'q-feedback err show';
+        fbEl.innerHTML = '<strong>✗ Incorrecto.</strong> ' + FEEDBACK[qId].err;
+        wrong++;
+      }
+    } else {
+      // Opción múltiple
+      const opts = document.querySelectorAll('#' + qId + ' .opt');
+      const fbEl = document.getElementById('fb' + qId);
+      opts.forEach((opt, i) => {
+        const letters = ['a','b','c','d'];
+        if (letters[i] === correct_ans) opt.classList.add('show-correct');
+        if (user_ans && letters[i] === user_ans && user_ans !== correct_ans) opt.classList.add('wrong');
+        if (user_ans && letters[i] === user_ans && user_ans === correct_ans) { opt.classList.remove('show-correct'); opt.classList.add('correct'); }
+      });
+      if (!user_ans) {
+        fbEl.className = 'q-feedback err show';
+        fbEl.innerHTML = '<strong>Sin responder.</strong> ' + FEEDBACK[qId].err;
+        wrong++;
+      } else if (user_ans === correct_ans) {
+        fbEl.className = 'q-feedback ok show';
+        fbEl.innerHTML = '<strong>✓ Correcto.</strong> ' + FEEDBACK[qId].ok;
+        correct++;
+      } else {
+        fbEl.className = 'q-feedback err show';
+        fbEl.innerHTML = '<strong>✗ Incorrecto.</strong> ' + FEEDBACK[qId].err;
+        wrong++;
+      }
+    }
+  });
+
+  // Mostrar rúbricas abiertas
+  document.getElementById('rubric20').classList.add('show');
+  document.getElementById('rubric25').classList.add('show');
+
+  // Resultado
+  const pct = Math.round((correct / total) * 100);
+  const panel = document.getElementById('resultPanel');
+  const top = document.getElementById('resultTop');
+  panel.classList.add('show');
+  document.getElementById('rbCorr').textContent = correct;
+  document.getElementById('rbWrong').textContent = wrong;
+  document.getElementById('rbPct').textContent = pct + '%';
+  document.getElementById('progressBar').style.width = '100%';
+
+  if (pct >= 90) {
+    top.className = 'result-top excelente';
+    document.getElementById('resultEmoji').textContent = '🏆';
+    document.getElementById('resultScore').textContent = pct + '%';
+    document.getElementById('resultLabel').textContent = 'Excelente — Nivel Élite';
+    document.getElementById('resultMsg').textContent = 'Dominas el protocolo Don Poncho. Eres exactamente el tipo de profesional que representa esta leyenda de 40 años.';
+  } else if (pct >= 70) {
+    top.className = 'result-top bien';
+    document.getElementById('resultEmoji').textContent = '⭐';
+    document.getElementById('resultScore').textContent = pct + '%';
+    document.getElementById('resultLabel').textContent = 'Aprobado — Buen Nivel';
+    document.getElementById('resultMsg').textContent = 'Conoces el protocolo. Revisa las preguntas incorrectas y profundiza en esos temas antes de tu próximo turno.';
+  } else {
+    top.className = 'result-top repaso';
+    document.getElementById('resultEmoji').textContent = '📖';
+    document.getElementById('resultScore').textContent = pct + '%';
+    document.getElementById('resultLabel').textContent = 'En Proceso — Necesita Repaso';
+    document.getElementById('resultMsg').textContent = 'Aún hay áreas por reforzar. Revisa el manual con atención, especialmente las secciones marcadas como incorrectas, y vuelve a intentarlo.';
+  }
+
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ─── REINICIAR ───
+function reiniciar() {
+  location.reload();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal del Equipo — Don Poncho</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --amber:#C8822A;--ambl:#E09A3F;--ambp:#F5C878;--ambd:#7A4E10;
+  --ink:#1C1208;--inkl:#2E1E0C;--cream:#FBF5EB;--creamd:#F0E6D3;
+  --white:#FEFCF8;--textl:#5C3D1E;--textll:#8B6940;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;-webkit-font-smoothing:antialiased;}
+body{font-family:'DM Sans',sans-serif;background:var(--ink);color:var(--cream);overflow-x:hidden;}
+
+/* ─── PANTALLA DE LOGIN ─── */
+#login-screen{
+  position:fixed;inset:0;z-index:1000;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 100%,rgba(200,130,42,.2) 0%,transparent 65%),
+    radial-gradient(ellipse 50% 40% at 85% 10%,rgba(181,74,26,.12) 0%,transparent 55%),
+    linear-gradient(170deg,#1C1208 0%,#2E1E0C 45%,#3F2D14 100%);
+  display:flex;align-items:center;justify-content:center;
+  padding:40px 24px;
+}
+#login-screen.hidden{display:none;}
+
+.login-box{
+  width:100%;max-width:420px;
+  text-align:center;
+}
+.login-sello{
+  width:90px;height:90px;
+  border:1px solid rgba(200,130,42,.5);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 32px;
+  position:relative;
+  animation:glow 3s ease-in-out infinite;
+}
+.login-sello::before{content:'';position:absolute;inset:-8px;border:1px solid rgba(200,130,42,.15);border-radius:50%;}
+.login-sello span{font-size:36px;}
+@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(200,130,42,.15);}50%{box-shadow:0 0 50px rgba(200,130,42,.4);}}
+
+.login-brand{
+  font-family:'Playfair Display',serif;
+  font-size:42px;font-weight:900;font-style:italic;
+  color:var(--amber);line-height:1;
+  margin-bottom:6px;
+  text-shadow:0 0 40px rgba(200,130,42,.25);
+}
+.login-sub{
+  font-size:9px;font-weight:700;letter-spacing:5px;
+  text-transform:uppercase;color:rgba(200,130,42,.5);
+  margin-bottom:8px;
+  font-family:'Lora',serif;font-style:italic;
+}
+.login-desc{
+  font-family:'Lora',serif;font-style:italic;
+  font-size:15px;color:rgba(245,200,120,.5);
+  margin-bottom:44px;line-height:1.6;
+}
+
+.login-field-label{
+  font-size:9px;font-weight:700;letter-spacing:4px;
+  text-transform:uppercase;color:var(--ambd);
+  margin-bottom:12px;display:block;text-align:left;
+}
+.login-input{
+  width:100%;padding:18px 20px;
+  background:rgba(200,130,42,.07);
+  border:1px solid rgba(200,130,42,.25);
+  border-radius:4px;
+  font-size:16px;color:var(--cream);
+  font-family:'DM Sans',sans-serif;
+  letter-spacing:4px;text-align:center;
+  outline:none;
+  transition:border-color .25s,background .25s;
+  -webkit-text-security:disc;
+}
+.login-input::placeholder{letter-spacing:2px;color:rgba(200,130,42,.3);}
+.login-input:focus{border-color:rgba(200,130,42,.6);background:rgba(200,130,42,.1);}
+
+.login-btn{
+  width:100%;margin-top:16px;
+  padding:18px;
+  background:linear-gradient(135deg,var(--ambd),var(--amber),var(--ambl));
+  border:none;border-radius:4px;
+  font-size:11px;font-weight:700;letter-spacing:4px;
+  text-transform:uppercase;color:var(--ink);
+  cursor:pointer;font-family:'DM Sans',sans-serif;
+  transition:opacity .2s,transform .2s;
+  box-shadow:0 8px 32px rgba(200,130,42,.3);
+}
+.login-btn:hover{opacity:.9;transform:translateY(-2px);}
+.login-btn:active{transform:translateY(0);}
+
+.login-error{
+  margin-top:14px;padding:12px;
+  background:rgba(181,74,26,.15);
+  border:1px solid rgba(181,74,26,.3);
+  border-radius:3px;
+  font-size:12px;color:#FF7050;
+  display:none;
+}
+.login-error.show{display:block;}
+
+/* ─── PORTAL PRINCIPAL ─── */
+#portal{display:none;}
+#portal.show{display:block;animation:fadeIn .5s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+/* Header del portal */
+.portal-header{
+  background:
+    radial-gradient(ellipse 100% 80% at 50% 100%,rgba(200,130,42,.18) 0%,transparent 65%),
+    linear-gradient(170deg,#1C1208 0%,#2E1E0C 50%,#3F2D14 100%);
+  padding:80px 40px 72px;
+  text-align:center;
+  position:relative;overflow:hidden;
+}
+.portal-header::before{
+  content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(200,130,42,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(200,130,42,.025) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+.ph-corner{position:absolute;width:70px;height:70px;border-color:rgba(200,130,42,.2);border-style:solid;}
+.ph-corner.tl{top:24px;left:24px;border-width:1px 0 0 1px;}
+.ph-corner.tr{top:24px;right:24px;border-width:1px 1px 0 0;}
+.ph-corner.bl{bottom:24px;left:24px;border-width:0 0 1px 1px;}
+.ph-corner.br{bottom:24px;right:24px;border-width:0 1px 1px 0;}
+
+.ph-sello{
+  width:80px;height:80px;
+  border:1px solid rgba(200,130,42,.45);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 28px;
+  position:relative;z-index:1;
+  animation:glow 4s ease-in-out infinite;
+}
+.ph-sello span{font-size:30px;}
+
+.ph-eyebrow{
+  position:relative;z-index:1;
+  font-size:8.5px;font-weight:700;letter-spacing:6px;
+  text-transform:uppercase;color:rgba(200,130,42,.6);
+  margin-bottom:14px;
+  font-family:'Lora',serif;font-style:italic;
+}
+.ph-logo{
+  position:relative;z-index:1;
+  font-family:'Playfair Display',serif;
+  font-size:clamp(48px,9vw,96px);
+  font-weight:900;font-style:italic;
+  color:var(--amber);line-height:.9;
+  margin-bottom:10px;
+  text-shadow:0 0 60px rgba(200,130,42,.28);
+}
+.ph-sub{
+  position:relative;z-index:1;
+  font-family:'Playfair Display',serif;
+  font-size:clamp(16px,2.5vw,26px);
+  color:rgba(245,200,120,.65);
+  letter-spacing:3px;margin-bottom:6px;
+}
+.ph-tagline{
+  position:relative;z-index:1;
+  font-family:'Lora',serif;font-style:italic;
+  font-size:15px;color:rgba(245,200,120,.35);
+  margin-bottom:44px;
+}
+.ph-div{
+  position:relative;z-index:1;
+  display:flex;align-items:center;gap:14px;
+  justify-content:center;
+}
+.ph-divl{height:1px;width:60px;background:linear-gradient(90deg,transparent,var(--amber));}
+.ph-divl:last-child{transform:scaleX(-1);}
+.ph-dia{width:7px;height:7px;background:var(--amber);transform:rotate(45deg);box-shadow:0 0 10px rgba(200,130,42,.5);}
+
+/* Bienvenida */
+.portal-welcome{
+  background:var(--inkl);
+  padding:48px 40px;text-align:center;
+  border-bottom:1px solid rgba(200,130,42,.1);
+}
+.pw-greeting{
+  font-family:'Lora',serif;font-style:italic;
+  font-size:18px;color:rgba(245,200,120,.6);
+  margin-bottom:10px;
+}
+.pw-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(24px,4vw,42px);
+  font-weight:700;color:var(--cream);
+  margin-bottom:14px;line-height:1.15;
+}
+.pw-title em{color:var(--amber);font-style:italic;}
+.pw-text{
+  font-size:14px;color:rgba(245,237,216,.55);
+  max-width:540px;margin:0 auto;line-height:1.75;
+}
+
+/* Grid de accesos */
+.portal-grid{
+  padding:60px 40px;
+  max-width:960px;margin:0 auto;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:24px;
+}
+
+.portal-card{
+  background:linear-gradient(160deg,rgba(45,30,12,.9),rgba(28,18,8,.95));
+  border:1px solid rgba(200,130,42,.15);
+  border-radius:4px;
+  padding:44px 36px;
+  text-decoration:none;
+  position:relative;overflow:hidden;
+  transition:transform .3s,border-color .3s,box-shadow .3s;
+  display:block;
+  cursor:pointer;
+}
+.portal-card::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--ambd),var(--amber),var(--ambl));
+  opacity:0;transition:opacity .3s;
+}
+.portal-card::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 50% at 80% 20%,rgba(200,130,42,.06),transparent);
+  pointer-events:none;
+}
+.portal-card:hover{
+  transform:translateY(-8px);
+  border-color:rgba(200,130,42,.35);
+  box-shadow:0 28px 64px rgba(28,18,8,.6);
+}
+.portal-card:hover::before{opacity:1;}
+
+.pc-num{
+  font-family:'Playfair Display',serif;
+  font-size:64px;font-weight:900;
+  color:rgba(200,130,42,.07);
+  position:absolute;top:12px;right:20px;
+  line-height:1;
+}
+.pc-icon{font-size:36px;margin-bottom:20px;display:block;}
+.pc-badge{
+  display:inline-block;padding:4px 12px;
+  background:rgba(200,130,42,.1);
+  border:1px solid rgba(200,130,42,.22);
+  border-radius:20px;
+  font-size:8px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--ambd);
+  margin-bottom:16px;
+}
+.pc-title{
+  font-family:'Playfair Display',serif;
+  font-size:24px;font-weight:700;
+  color:var(--cream);margin-bottom:12px;
+  line-height:1.2;
+}
+.pc-title em{color:var(--amber);font-style:italic;}
+.pc-desc{
+  font-size:13px;color:rgba(245,237,216,.55);
+  line-height:1.8;margin-bottom:24px;
+}
+.pc-modules{
+  display:flex;flex-wrap:wrap;gap:6px;
+  margin-bottom:28px;
+}
+.pc-module{
+  font-size:9px;font-weight:600;letter-spacing:1px;
+  color:rgba(200,130,42,.6);
+  background:rgba(200,130,42,.06);
+  border:1px solid rgba(200,130,42,.12);
+  border-radius:3px;padding:3px 9px;
+}
+.pc-btn{
+  width:100%;padding:16px;
+  background:linear-gradient(135deg,var(--ambd),var(--amber));
+  border:none;border-radius:3px;
+  font-size:10px;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:var(--ink);
+  cursor:pointer;font-family:'DM Sans',sans-serif;
+  transition:opacity .2s,transform .15s;
+  box-shadow:0 6px 20px rgba(200,130,42,.25);
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.pc-btn:hover{opacity:.9;transform:translateY(-1px);}
+
+/* Info bar */
+.portal-info{
+  background:rgba(200,130,42,.05);
+  border-top:1px solid rgba(200,130,42,.1);
+  border-bottom:1px solid rgba(200,130,42,.1);
+  padding:28px 40px;
+  display:flex;flex-wrap:wrap;gap:24px;
+  justify-content:center;
+  max-width:960px;margin:0 auto 0;
+}
+.pi-item{
+  display:flex;align-items:center;gap:10px;
+  font-size:12px;color:rgba(245,237,216,.45);
+}
+.pi-item span{color:var(--amber);}
+
+/* Frase motivacional */
+.portal-quote{
+  background:var(--inkl);
+  padding:56px 40px;text-align:center;
+  border-top:1px solid rgba(200,130,42,.08);
+}
+.pq-text{
+  font-family:'Lora',serif;font-style:italic;
+  font-size:clamp(18px,2.8vw,28px);
+  color:var(--cream);line-height:1.6;
+  max-width:680px;margin:0 auto 16px;
+}
+.pq-attr{
+  font-size:9px;font-weight:700;letter-spacing:4px;
+  text-transform:uppercase;color:var(--amber);
+}
+
+/* Footer */
+.portal-footer{
+  background:var(--ink);
+  border-top:1px solid rgba(200,130,42,.1);
+  padding:40px;text-align:center;
+  position:relative;
+}
+.portal-footer::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--amber),transparent);
+}
+.pf-logo{
+  font-family:'Playfair Display',serif;
+  font-size:28px;font-weight:900;font-style:italic;
+  color:var(--amber);margin-bottom:4px;
+}
+.pf-sub{font-size:8.5px;letter-spacing:5px;text-transform:uppercase;color:rgba(200,130,42,.3);margin-bottom:20px;}
+.pf-contacts{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-bottom:16px;}
+.pf-contact{font-size:11px;color:rgba(245,237,216,.35);display:flex;align-items:center;gap:6px;}
+.pf-contact span{color:var(--amber);}
+.pf-legal{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(200,130,42,.15);}
+
+/* Logout */
+.logout-btn{
+  position:fixed;bottom:20px;right:20px;z-index:100;
+  background:rgba(28,18,8,.9);
+  border:1px solid rgba(200,130,42,.2);
+  border-radius:30px;padding:10px 18px;
+  font-size:9px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:rgba(200,130,42,.5);
+  cursor:pointer;font-family:'DM Sans',sans-serif;
+  backdrop-filter:blur(10px);
+  transition:all .2s;display:none;
+}
+.logout-btn:hover{color:var(--amber);border-color:rgba(200,130,42,.4);}
+.logout-btn.show{display:block;}
+
+/* Mobile */
+@media(max-width:600px){
+  .portal-header{padding:60px 24px 56px;}
+  .ph-corner{width:44px;height:44px;top:16px;}
+  .ph-corner.tl,.ph-corner.bl{left:16px;}
+  .ph-corner.tr,.ph-corner.br{right:16px;}
+  .ph-corner.bl,.ph-corner.br{bottom:16px;}
+  .portal-grid{padding:36px 20px;gap:16px;}
+  .portal-welcome,.portal-quote,.portal-footer{padding:40px 24px;}
+  .portal-info{padding:20px 24px;}
+  .portal-card{padding:36px 28px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+  PANTALLA DE ACCESO
+═══════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-sello"><span>🔥</span></div>
+    <div class="login-brand">Don Poncho</div>
+    <div class="login-sub">Portal del Equipo</div>
+    <div class="login-desc">Acceso exclusivo para el equipo<br>de Barbacoa y Antojitos Don Poncho</div>
+
+    <label class="login-field-label">Contraseña de Equipo</label>
+    <input
+      type="password"
+      class="login-input"
+      id="pwd-input"
+      placeholder="••••••••••"
+      autocomplete="current-password"
+      onkeypress="if(event.key==='Enter')verificar()"
+    >
+    <div class="login-error" id="login-error">
+      Contraseña incorrecta. Pregunta a tu supervisor.
+    </div>
+    <button class="login-btn" onclick="verificar()">
+      → Entrar al Portal
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+  PORTAL PRINCIPAL
+═══════════════════════════════════════ -->
+<div id="portal">
+
+  <!-- Header -->
+  <div class="portal-header">
+    <div class="ph-corner tl"></div><div class="ph-corner tr"></div>
+    <div class="ph-corner bl"></div><div class="ph-corner br"></div>
+    <div class="ph-sello"><span>🔥</span></div>
+    <div class="ph-eyebrow">Portal Exclusivo del Equipo</div>
+    <div class="ph-logo">Don Poncho</div>
+    <div class="ph-sub">Manuales de Élite</div>
+    <div class="ph-tagline">Todo lo que necesitas para ser extraordinario</div>
+    <div class="ph-div">
+      <div class="ph-divl"></div>
+      <div class="ph-dia"></div>
+      <div class="ph-divl"></div>
+    </div>
+  </div>
+
+  <!-- Bienvenida -->
+  <div class="portal-welcome">
+    <div class="pw-greeting">Bienvenido al equipo de</div>
+    <div class="pw-title">Barbacoa y Antojitos<br><em>Don Poncho</em></div>
+    <div class="pw-text">Estos manuales son tu guía para dar un servicio de élite mundial. Léelos, practícalos, y vuélvelos parte de ti. El 2% que decide ser extraordinario empieza aquí.</div>
+  </div>
+
+  <!-- Info bar -->
+  <div class="portal-info">
+    <div class="pi-item">📍 <span>Av. Morelos 350, Milpa Alta, CDMX</span></div>
+    <div class="pi-item">📅 <span>Solo sábados, domingos y festivos</span></div>
+    <div class="pi-item">💬 WhatsApp: <span>55 2903-0409</span></div>
+    <div class="pi-item">📸 <span>@barbacoadonponcho_oficial</span></div>
+  </div>
+
+  <!-- Cards de acceso -->
+  <div class="portal-grid">
+
+    <!-- Manual de Protocolo -->
+    <div class="portal-card" onclick="abrirManual()">
+      <div class="pc-num">01</div>
+      <div class="pc-icon">📋</div>
+      <div class="pc-badge">Manual de Servicio</div>
+      <div class="pc-title">Manual del<br>Mesero de <em>Élite</em></div>
+      <div class="pc-desc">El protocolo completo de Don Poncho. Todo lo que necesitas saber para cada turno — desde la bienvenida hasta la despedida perfecta.</div>
+      <div class="pc-modules">
+        <span class="pc-module">Identidad</span>
+        <span class="pc-module">Protocolo</span>
+        <span class="pc-module">Guiones</span>
+        <span class="pc-module">Upsell</span>
+        <span class="pc-module">El Menú</span>
+        <span class="pc-module">Situaciones</span>
+        <span class="pc-module">Los 10</span>
+        <span class="pc-module">Checklist</span>
+      </div>
+      <button class="pc-btn">
+        <span>→</span> Abrir Manual
+      </button>
+    </div>
+
+    <!-- Guía de Conexión -->
+    <div class="portal-card" onclick="abrirConexion()">
+      <div class="pc-num">02</div>
+      <div class="pc-icon">🧡</div>
+      <div class="pc-badge">Arte de Conectar</div>
+      <div class="pc-title">Élite: Conexión,<br><em>Propinas</em> y Lealtad</div>
+      <div class="pc-desc">La guía que transforma tu mentalidad. Cómo crear vínculos reales, multiplicar tus propinas y convertir cada mesa en un cliente de por vida.</div>
+      <div class="pc-modules">
+        <span class="pc-module">Mentalidad</span>
+        <span class="pc-module">Filosofía</span>
+        <span class="pc-module">Propinas</span>
+        <span class="pc-module">Conexión</span>
+        <span class="pc-module">Por tipo de mesa</span>
+        <span class="pc-module">Rituales</span>
+        <span class="pc-module">La Carta</span>
+      </div>
+      <button class="pc-btn">
+        <span>→</span> Abrir Guía
+      </button>
+    </div>
+
+
+    <!-- Examen Protocolo -->
+    <div class="portal-card" onclick="window.location.href='examen_protocolo.html'">
+      <div class="pc-num">03</div>
+      <div class="pc-icon">📝</div>
+      <div class="pc-badge">Evaluación Oficial</div>
+      <div class="pc-title">Examen de<br><em>Protocolo</em></div>
+      <div class="pc-desc">25 preguntas sobre el manual de servicio. Opción múltiple, Verdadero/Falso y casos reales. Calificación automática inmediata.</div>
+      <div class="pc-modules">
+        <span class="pc-module">10 Opción Múltiple</span>
+        <span class="pc-module">8 V o F</span>
+        <span class="pc-module">7 Casos Reales</span>
+        <span class="pc-module">70% para aprobar</span>
+      </div>
+      <button class="pc-btn"><span>→</span> Iniciar Examen</button>
+    </div>
+
+    <!-- Examen Conexión -->
+    <div class="portal-card" onclick="window.location.href='examen_conexion.html'">
+      <div class="pc-num">04</div>
+      <div class="pc-icon">🧡</div>
+      <div class="pc-badge">Evaluación Oficial</div>
+      <div class="pc-title">Examen de<br><em>Conexión y Élite</em></div>
+      <div class="pc-desc">25 preguntas sobre conexión, propinas y clientes de por vida. Incluye casos reales de mentalidad y servicio extraordinario.</div>
+      <div class="pc-modules">
+        <span class="pc-module">10 Opción Múltiple</span>
+        <span class="pc-module">8 V o F</span>
+        <span class="pc-module">7 Casos Reales</span>
+        <span class="pc-module">70% para aprobar</span>
+      </div>
+      <button class="pc-btn"><span>→</span> Iniciar Examen</button>
+    </div>
+
+  </div>
+
+  <!-- Frase -->
+  <div class="portal-quote">
+    <div class="pq-text">"No tenemos sucursales. No tenemos franquicias. Solo tenemos a nuestro equipo. Eso es todo lo que necesitamos para ser los mejores."</div>
+    <div class="pq-attr">— Don Poncho · Milpa Alta · Desde 1985</div>
+  </div>
+
+  <!-- Footer -->
+  <div class="portal-footer">
+    <div class="pf-logo">Don Poncho</div>
+    <div class="pf-sub">Barbacoa y Antojitos Mexicanos · Desde 1985</div>
+    <div class="pf-contacts">
+      <div class="pf-contact">📞 <span>55 5548-0603</span></div>
+      <div class="pf-contact">💬 <span>55 2903-0409</span></div>
+      <div class="pf-contact">🌐 <span>barbacoadonponcho.com</span></div>
+    </div>
+    <div class="pf-legal">Sin sucursales · Sin franquicias · Solo fin de semana · Estacionamiento gratuito · Área de juegos</div>
+  </div>
+
+</div>
+
+<!-- Botón de salir -->
+<button class="logout-btn" id="logout-btn" onclick="cerrarSesion()">⬅ Salir</button>
+
+<script>
+/* ─── CONTRASEÑA ─── */
+/* CAMBIA ESTA CONTRASEÑA POR LA QUE TÚ ELIJAS */
+const PASSWORD = 'donponcho2025';
+const SESSION_KEY = 'dp_equipo_auth';
+
+function verificar() {
+  const input = document.getElementById('pwd-input').value.trim();
+  const error = document.getElementById('login-error');
+  if (input === PASSWORD) {
+    sessionStorage.setItem(SESSION_KEY, 'true');
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('portal').classList.add('show');
+    document.getElementById('logout-btn').classList.add('show');
+    error.classList.remove('show');
+  } else {
+    error.classList.add('show');
+    document.getElementById('pwd-input').value = '';
+    document.getElementById('pwd-input').focus();
+    document.getElementById('pwd-input').style.borderColor = 'rgba(181,74,26,.6)';
+    setTimeout(() => {
+      document.getElementById('pwd-input').style.borderColor = '';
+    }, 1000);
+  }
+}
+
+function cerrarSesion() {
+  sessionStorage.removeItem(SESSION_KEY);
+  document.getElementById('portal').classList.remove('show');
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('logout-btn').classList.remove('show');
+  document.getElementById('pwd-input').value = '';
+}
+
+/* Verificar si ya hay sesión activa */
+window.addEventListener('load', () => {
+  if (sessionStorage.getItem(SESSION_KEY) === 'true') {
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('portal').classList.add('show');
+    document.getElementById('logout-btn').classList.add('show');
+  }
+});
+
+/* ─── NAVEGACIÓN ─── */
+function abrirManual() {
+  window.location.href = 'manual.html';
+}
+function abrirConexion() {
+  window.location.href = 'conexion.html';
+}
+</script>
+</body>
+</html>
